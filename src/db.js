@@ -12,7 +12,7 @@ const executeQuery = async (sql, parameters = []) => {
     secretArn: 'arn:aws:secretsmanager:ap-northeast-2:533266969406:secret:rds-db-credentials/cluster-TNEYQEZZ3U5CYESUCULLOB3YI4/admin/1732238323022-B0sMtY',
     database: 'sex',
     sql, // 실행할 SQL 쿼리
-    parameters, // SQL 쿼리의 파라미터
+    parameters, // SQL 쿼리의 파라미터2
   };
 
   try {
