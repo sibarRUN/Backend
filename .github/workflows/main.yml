@@ -25,4 +25,4 @@ jobs:
       # 3. S3 버킷에 파일 업로드
       - name: Deploy to S3
         run: |
-          aws s3 sync . s3://bon-genie-front --delete
+          aws s3 sync . s3://bon-genie-back --delete
