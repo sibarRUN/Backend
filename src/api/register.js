@@ -1,6 +1,8 @@
 const express = require('express');
-const executeQuery = require('../db');
+const { getItem, putItem, deleteItem, scanTable } = require('../db/dynamo');
 const router = express.Router();
+
+const TABLE_NAME = 'register';
 
 // GET: 본인의 회원 정보 조회
 router.get('/', async (req, res) => {
@@ -11,12 +13,11 @@ router.get('/', async (req, res) => {
   }
 
   try {
-    // 사용자 ID에 해당하는 데이터만 조회
-    const records = await executeQuery('SELECT * FROM register WHERE ID = :ID', [
-      { name: 'ID', value: { stringValue: userId } },
-    ]);
-
-    res.status(200).json(records);
+    const user = await getItem(TABLE_NAME, { ID: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ error: 'Database error' });
   }
@@ -25,12 +26,13 @@ router.get('/', async (req, res) => {
 // POST: 새 회원 추가
 router.post('/', async (req, res) => {
   const { ID, PW, NICKNAME } = req.body;
+
+  if (!ID || !PW || !NICKNAME) {
+    return res.status(400).json({ error: 'ID, PW, and NICKNAME are required' });
+  }
+
   try {
-    await executeQuery('INSERT INTO register (ID, PW, NICKNAME) VALUES (:ID, :PW, :NICKNAME)', [
-      { name: 'ID', value: { stringValue: ID } },
-      { name: 'PW', value: { stringValue: PW } },
-      { name: 'NICKNAME', value: { stringValue: NICKNAME } },
-    ]);
+    await putItem(TABLE_NAME, { ID, PW, NICKNAME });
     res.status(201).json({ message: 'User added successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Database error' });
@@ -42,16 +44,8 @@ router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    // 트랜잭션으로 회원 데이터와 관련 데이터 삭제
-    await executeQuery('DELETE FROM bongjini WHERE ID = :ID', [
-      { name: 'ID', value: { stringValue: id } },
-    ]);
-
-    await executeQuery('DELETE FROM register WHERE ID = :ID', [
-      { name: 'ID', value: { stringValue: id } },
-    ]);
-
-    res.status(200).json({ message: 'User and related data deleted successfully' });
+    await deleteItem(TABLE_NAME, { ID: id });
+    res.status(200).json({ message: 'User deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Database error' });
   }

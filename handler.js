@@ -1,8 +1,9 @@
 const serverless = require('serverless-http');
 const express = require('express');
 const cors = require('cors'); // CORS 미들웨어 가져오기
-const registerRoutes = require('./api/register'); // register API 가져오기
-const bongjiniRoutes = require('./api/bongjini'); // bongjini API 가져오기
+const registerRoutes = require('./src/api/register'); // register API 가져오기
+const bongjiniRoutes = require('./src/api/bongjini'); // bongjini API 가져오기
+
 
 const app = express();
 app.use(cors()); // CORS 문제 해결을 위해 추가
