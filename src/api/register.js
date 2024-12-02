@@ -2,10 +2,20 @@ const express = require('express');
 const executeQuery = require('../db');
 const router = express.Router();
 
-// GET: 모든 회원 조회
+// GET: 본인의 회원 정보 조회
 router.get('/', async (req, res) => {
+  const userId = req.headers['x-user-id']; // 헤더에서 Cognito 사용자 ID 가져오기
+
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required in the header' });
+  }
+
   try {
-    const records = await executeQuery('SELECT * FROM register');
+    // 사용자 ID에 해당하는 데이터만 조회
+    const records = await executeQuery('SELECT * FROM register WHERE ID = :ID', [
+      { name: 'ID', value: { stringValue: userId } },
+    ]);
+
     res.status(200).json(records);
   } catch (error) {
     res.status(500).json({ error: 'Database error' });
@@ -27,12 +37,12 @@ router.post('/', async (req, res) => {
   }
 });
 
-// DELETE: 회원 삭제 (bongjini 데이터 포함)
+// DELETE: 회원 삭제
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    // 트랜잭션으로 회원 데이터와 관련 키/체중 데이터 삭제
+    // 트랜잭션으로 회원 데이터와 관련 데이터 삭제
     await executeQuery('DELETE FROM bongjini WHERE ID = :ID', [
       { name: 'ID', value: { stringValue: id } },
     ]);
