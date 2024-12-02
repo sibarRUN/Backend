@@ -1,8 +1,10 @@
 const express = require('express');
 const { getItem, putItem, deleteItem, scanTable } = require('../db/dynamo');
+const { deleteItem: deleteBongjiniItem } = require('../db/dynamo');
 const router = express.Router();
 
 const TABLE_NAME = 'register';
+const BONGJINI_TABLE_NAME = 'bongjini';
 
 // GET: 본인의 회원 정보 조회
 router.get('/', async (req, res) => {
@@ -44,8 +46,12 @@ router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
+    // Register 테이블에서 사용자 삭제
     await deleteItem(TABLE_NAME, { ID: id });
-    res.status(200).json({ message: 'User deleted successfully' });
+    // bongjini 테이블에서도 해당 사용자 삭제
+    await deleteBongjiniItem(BONGJINI_TABLE_NAME, { ID: id });
+
+    res.status(200).json({ message: 'User and associated bongjini data deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Database error' });
   }
