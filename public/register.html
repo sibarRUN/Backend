@@ -79,10 +79,11 @@
 
       // 서버로 데이터 전송
       try {
-        const response = await fetch('https://t5u6x5zfkc.execute-api.ap-northeast-2.amazonaws.com/dev/register', {
+        const response = await fetch('https://g0es0utxc7.execute-api.ap-northeast-2.amazonaws.com/dev/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'x-user-id': id,  // 사용자 ID를 백엔드로 전달하기 위해 헤더에 추가
           },
           body: JSON.stringify({
             ID: id,
