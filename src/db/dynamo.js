@@ -59,9 +59,23 @@ const scanTable = async (TableName) => {
   }
 };
 
+/**
+ * 데이터 업데이트
+ */
+const updateItem = async (params) => {
+  try {
+    const result = await dynamoDb.update(params).promise();
+    return result;
+  } catch (error) {
+    console.error('DynamoDB Update Error:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   getItem,
   putItem,
   deleteItem,
   scanTable,
+  updateItem, // 추가된 부분
 };
