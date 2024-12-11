@@ -163,12 +163,8 @@
       image.style.display = 'block'; // 이미지 표시
     }
 
-    // 환경에 따른 API URL 설정
-    const isLocal = window.location.hostname === 'localhost';
-    const baseUrl = isLocal
-      ? 'http://localhost:3000'
-      : 'https://l4194gow55.execute-api.ap-northeast-2.amazonaws.com/dev';
-    const apiUrl = `${baseUrl}/bongjini`;
+    // API URL 설정
+    const apiUrl = 'https://l4194gow55.execute-api.ap-northeast-2.amazonaws.com/dev/bongjini';
 
     // JWT 토큰을 검증하여 사용자 ID를 추출하는 함수
     async function getUserIdFromToken() {
